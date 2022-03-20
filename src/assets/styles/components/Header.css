@@ -1,0 +1,19 @@
+.HeaderContainer {
+  align-items: center;
+  background: #e4ffbd;
+  border-bottom: 1px solid gray;
+  display: flex;
+  height: 70px;
+  padding: 0 50px;
+}
+
+.LogoImage {
+  width: 50px;
+}
+
+.HeaderRightSideContainer {
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}

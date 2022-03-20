@@ -1,0 +1,26 @@
+.AppWrapper {
+  height: 100vh;
+  overflow: hidden;
+  width: 100%;
+}
+
+.AppContainer {
+  display: flex;
+  height: calc(100vh - 155px);
+  width: 100%;
+}
+
+.AppRoutingContainer {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 155px);
+  overflow: hidden scroll;
+  width: 100%;
+}
+
+.AppContent {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 155px);
+  overflow: hidden scroll;
+}
