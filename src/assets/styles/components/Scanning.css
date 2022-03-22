@@ -49,6 +49,12 @@
   text-transform: uppercase;
 }
 
+.ProfileName {
+  font-size: 1.25rem;
+  font-weight: 600;
+  padding: 0 1rem;
+}
+
 .InprogressColor {
   color: #CA9D00 !important;
 }
@@ -59,4 +65,40 @@
 
 .ErrorColor {
   color: #FF6666 !important;
+}
+
+.NotFoundContainer {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0;
+  width: 100%;
+}
+
+.PostResultContainer {
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.PostResultItemContainer {
+  background: #ffffff;
+  border-radius: 1rem;
+  box-shadow: -2px 4px 4px rgb(0 0 0 / 25%);
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  padding: 0.8rem 0.25rem;
+}
+
+.PostResultItemImg {
+  width: 150px;
+}
+
+.PostResultItemActions {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: .25rem;
 }

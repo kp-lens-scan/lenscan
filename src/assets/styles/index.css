@@ -1,5 +1,8 @@
 @import url('./components/Header.css');
 @import url('./components/Scanning.css');
+@import url('./components/Account.css');
+@import url('./components/ConnectWallet.css');
+@import url('./components/Spinner.css');
 
 body {
   color: #000000;

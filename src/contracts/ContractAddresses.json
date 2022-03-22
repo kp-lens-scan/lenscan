@@ -1,0 +1,22 @@
+{
+  "LensHubProxy": "0xd7B3481De00995046C7850bCe9a5196B7605c367",
+  "LensHubImplementation": "0x7c86e2a63941442462cce73EcA9F07F4Ad023261",
+  "PublishingLogicLibrary": "0x51cB2Dc358B9FA49B527620715af31e56657C7f2",
+  "InteractionLogicLibrary": "0x0E0bd025084a3DacDf41A63ac9442655a8A2391d",
+  "ProfileTokenURILogicLibrary": "0x80283F1DbfA86C5308E4aC2286009b7422C50692",
+  "FollowNFTImplementation": "0x416a7d147e3e128f5ecc61a92676c1df2d4ac96a",
+  "CollectNFTImplementation": "0x203a7d3f0fcb233fcc3dee872a498c16a58448ba",
+  "ModuleGlobals": "0x989C3d8bC8143f00dd8bcbACFCC113340f42D48e",
+  "FeeCollectModule": "0x19809De86a0297C1B126f477724bBaa8Fb3Fa147",
+  "LimitedFeeCollectModule": "0xe81908aC6a0FdF1D283EA13435c9c3D13dc93E4B",
+  "TimedFeeCollectModule": "0xbf307F8B9B0B12E116869B600C1aEa33Bbe29dE3",
+  "LimitedTimedFeeCollectModule": "0x0bA34a3733bE773F3801bf8e767c258aa216D50B",
+  "RevertCollectModule": "0x98dfAB2360352D9Da122b5F43a4a4fa5D3Ce25a3",
+  "EmptyCollectModule": "0xb96e42b5579e76197B4d2EA710fF50e037881253",
+  "FeeFollowModule": "0xfb7A602c73Ab80b314588A94574F26E7E459C236",
+  "ApprovalFollowModule": "0x2e5570D937e179Eb531f3821a0DCe97Cbd8b371e",
+  "FollowerOnlyReferenceModule": "0x8cc1F4C7D3aFf9053eA2d840EAd31f5B68541A38",
+  "MockProfileCreationProxy": "0x9BB48d8F9c4596b98C8bB1fB6D67aaE238F81CC2",
+  "LensPeripheryDataProvider": "0x5C4740958A84EA06b3e23aC32E2c54F6DEEcD816",
+  "UIDataProvider": "0xeA39b25B8A584892327da5F47e3d2ad0A91a6318"
+}

@@ -4739,10 +4739,10 @@ etag@~1.8.1:
   resolved "https://registry.yarnpkg.com/etag/-/etag-1.8.1.tgz#41ae2eeb65efa62268aebfea83ac7d79299b0887"
   integrity sha1-Qa4u62XvpiJorr/qg6x9eSmbCIc=
 
-ether-swr@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/ether-swr/-/ether-swr-2.0.1.tgz#76175d8a1f4758545cdfa03410c2d134bc97e947"
-  integrity sha512-FWck86RyNU4giiJeLyWzT/xPGYuTA8G2yFioSRON20aL3urbUbTqv0krh1yWvgQ+JZX4/cqnB92GiRQr0zkNzQ==
+ether-swr@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/ether-swr/-/ether-swr-1.0.0.tgz#77c741d99a8e136689eab0a952379a91d1c89306"
+  integrity sha512-s+kpEtzivKJfWTOtZZl9YJ7rEBopdLXGydfnG76cb8MXWLHh4JOdrRUIJCAdli7ctm+8aVOpEdbTg8H3k6/xeA==
 
 ethers@^5.6.1:
   version "5.6.1"
@@ -8777,7 +8777,7 @@ svgo@^2.7.0:
     picocolors "^1.0.0"
     stable "^0.1.8"
 
-swr@^1.2.2:
+swr@^1.0.1:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/swr/-/swr-1.2.2.tgz#6cae09928d30593a7980d80f85823e57468fac5d"
   integrity sha512-ky0BskS/V47GpW8d6RU7CPsr6J8cr7mQD6+do5eky3bM0IyJaoi3vO8UhvrzJaObuTlGhPl2szodeB2dUd76Xw==
