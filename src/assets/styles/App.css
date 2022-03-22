@@ -7,14 +7,14 @@
 
 .AppContainer {
   display: flex;
-  height: calc(100vh - 155px);
+  height: calc(100vh - 70px);
   width: 100%;
 }
 
 .AppRoutingContainer {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 155px);
+  height: calc(100vh - 70px);
   overflow: hidden scroll;
   width: 100%;
 }
@@ -22,6 +22,6 @@
 .AppContent {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 155px);
+  height: calc(100vh - 70px);
   overflow: hidden scroll;
 }
