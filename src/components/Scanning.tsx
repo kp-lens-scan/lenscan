@@ -34,9 +34,8 @@ const Scanning = () => {
     value: '',
     invalid: true
   });
-  const [profileId, setProfileId] = useState();
   const [profile, setProfile] = useState<IProfile>();
-  const [pub, setPub] = useState<IPub>();
+  const [pubs, setPubs] = useState<Array<IPub>>([]);
   const [scanningAccount, setScanningAccount] = useState(false);
   const [accountNotFound, setAccountNotFound] = useState(false);
   const lensHubProxy = getContractByName('LensHubProxy', library.getSigner());
@@ -44,6 +43,8 @@ const Scanning = () => {
   const scanAccount = async () => {
     setScanningAccount(true);
     setAccountNotFound(false);
+    setPubs([]);
+    setProfile(undefined);
     const proId = await lensHubProxy.getProfileIdByHandle(accountControl.value);
     if (parseFloat(proId) === 0) {
       setAccountNotFound(true);
@@ -51,10 +52,18 @@ const Scanning = () => {
       return;
     }
     const pubCount = await lensHubProxy.getPubCount(proId);
-    const pubR: IPub = await lensHubProxy.getPub(proId, pubCount);
+    if (parseFloat(pubCount) > 0) {
+      const pubsTemp = [];
+      for (let i = 1; i <= parseFloat(pubCount); i++) {
+        const pubR: IPub = await lensHubProxy.getPub(proId, pubCount);
+        pubsTemp.push(pubR);
+      }
+      setPubs(pubsTemp);
+    }
     const profileR: IProfile = await lensHubProxy.getProfile(proId);
     setProfile(profileR);
-    setPub(pubR);
+    const followers = await lensHubProxy.getFollowNFT(proId);
+    console.log(followers)
     setScanningAccount(false);
   }
 
@@ -70,8 +79,13 @@ const Scanning = () => {
       </ToggleButtonGroup>
       {toggleValue === 'account' ?
         <div className="ScanningDataContainer">
-          <TextField fullWidth className="ScanningAccountInput" placeholder="Enter an account to scan" type="text"
+          <TextField fullWidth className="ScanningAccountInput" placeholder="Enter a handle string to scan" type="text"
             value={accountControl.value}
+            onKeyUp={(e) => {
+              if (e.key === 'Enter' || e.keyCode === 13) {
+                scanAccount();
+              }
+            }}
             onChange={(e) => {
               if (e.target.value) {
                 setAccountControl({
@@ -94,11 +108,10 @@ const Scanning = () => {
               <>
                 {!accountNotFound ?
                   <>
-                    <span className="ProfileName">{profile?.handle}</span>
-                    {/* <div className="AccountRatingContainer">
-                      <span className="AccountRatingLabel">Account Rating:</span>
-                      <span className="AccountRatingValue CompletedColor">Good</span>
-                    </div> */}
+                    <div className="ProfileContainer">
+                      <span className="ProfileLabel">Handle string:</span>
+                      <span className="ProfileName">{profile?.handle}</span>
+                    </div>
                     <TabContext value={accountTab}>
                       <TabList textColor="primary" onChange={(event, value) => {
                         if (value) {
@@ -106,37 +119,32 @@ const Scanning = () => {
                         }
                       }}>
                         <Tab label="POSTS" value="posts" />
-                        <Tab label="INVESTMENTS" value="investments" />
-                        <Tab label="COMMUNITIES" value="communities" />
-                        <Tab label="NFTS" value="nfts" />
+                        <Tab label="FOLLOWERS" value="followers" />
                       </TabList>
                       <TabPanel value={'posts'}>
-                        {profile && pub ?
+                        {pubs.length > 0 ?
                           <div className="PostResultContainer">
-                            <div className="PostResultItemContainer">
-                              <img className="PostResultItemImg" src={paperImg} alt="Paper" />
-                              <div className="PostResultItemActions">
-                                <Button variant="contained" color="secondary" onClick={() => {
-                                  window.open(pub?.contentURI, '_blank');
-                                }}>Read</Button>
+                            {pubs.map((pub: IPub, index: number) =>
+                              <div className="PostResultItemContainer" key={index}>
+                                <span className="PostResultItemId">#{index + 1}</span>
+                                <img className="PostResultItemImg" src={paperImg} alt="Paper" />
+                                <div className="PostResultItemActions">
+                                  <Button variant="contained" color="secondary" onClick={() => {
+                                    window.open(pub?.contentURI, '_blank');
+                                  }}>Read</Button>
+                                </div>
                               </div>
-                            </div>
-                          </div> : <></>
+                            )}
+                          </div> : <span>This handle string has no post!</span>
                         }
                       </TabPanel>
-                      <TabPanel value={'investments'}>
+                      <TabPanel value={'followers'}>
                         Item Two
-                      </TabPanel>
-                      <TabPanel value={'communities'}>
-                        Item Three
-                      </TabPanel>
-                      <TabPanel value={'nfts'}>
-                        Item Four
                       </TabPanel>
                     </TabContext>
                   </> :
                   <div className="NotFoundContainer">
-                    <span>Can't found</span>
+                    <span>This handle was not found! Are you sure you entered a handle ?</span>
                   </div>
                 }
               </> : <Spinner />
@@ -157,10 +165,6 @@ const Scanning = () => {
             <span className="ScanningButtonText">Scan</span>
           </Button>
           <div className="ScanningResultsContainer">
-            <div className="AccountRatingContainer">
-              <span className="AccountRatingLabel">Account Rating:</span>
-              <span className="AccountRatingValue CompletedColor">Good</span>
-            </div>
             <TabContext value={accountTab}>
               <TabList textColor="primary" onChange={(event, value) => {
                 if (value) {
@@ -168,21 +172,9 @@ const Scanning = () => {
                 }
               }}>
                 <Tab label="POSTS" value="posts" />
-                <Tab label="INVESTMENTS" value="investments" />
-                <Tab label="COMMUNITIES" value="communities" />
-                <Tab label="NFTS" value="nfts" />
               </TabList>
               <TabPanel value={'posts'}>
                 Item One
-              </TabPanel>
-              <TabPanel value={'investments'}>
-                Item Two
-              </TabPanel>
-              <TabPanel value={'communities'}>
-                Item Three
-              </TabPanel>
-              <TabPanel value={'nfts'}>
-                Item Four
               </TabPanel>
             </TabContext>
           </div>

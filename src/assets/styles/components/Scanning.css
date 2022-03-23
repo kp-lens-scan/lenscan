@@ -31,29 +31,21 @@
   width: 100%;
 }
 
-.AccountRatingContainer {
+.ProfileContainer {
   align-items: center;
   display: flex;
   gap: .5rem;
   padding: .5rem 1rem;
 }
 
-.AccountRatingLabel {
+.ProfileLabel {
   color: #807a7a;
-  text-transform: uppercase;
-}
-
-.AccountRatingValue {
-  font-size: 1.25rem;
-  font-weight: 600;
-  text-transform: uppercase;
 }
 
 .ProfileName {
   color: #913fdd;
   font-size: 1.25rem;
   font-weight: 600;
-  padding: 0 1rem;
 }
 
 .InprogressColor {
@@ -78,7 +70,7 @@
 
 .PostResultContainer {
   display: flex;
-  gap: .5rem;
+  gap: 1rem;
   flex-wrap: wrap;
   width: 100%;
 }
@@ -89,12 +81,12 @@
   box-shadow: -2px 4px 4px rgb(0 0 0 / 25%);
   display: flex;
   flex-direction: column;
-  gap: .5rem;
-  padding: 0.8rem 0.25rem;
+  gap: .25rem;
+  padding: .35rem;
 }
 
 .PostResultItemImg {
-  width: 150px;
+  width: 120px;
 }
 
 .PostResultItemActions {
@@ -102,6 +94,13 @@
   display: flex;
   justify-content: center;
   padding: .25rem;
+}
+
+.PostResultItemId {
+  color: #2424e7;
+  font-weight: 600;
+  padding: 0 1rem;
+  text-align: right;
 }
 
 .ScanningButtonText {
