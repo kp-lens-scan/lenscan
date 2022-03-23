@@ -1,7 +1,7 @@
 .HeaderContainer {
   align-items: center;
   background: #e4ffbd;
-  border-bottom: 1px solid gray;
+  box-shadow: 0 3px 3px rgb(57 63 72 / 30%);
   display: flex;
   height: 70px;
   padding: 0 50px;

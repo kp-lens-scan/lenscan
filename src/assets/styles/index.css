@@ -3,6 +3,7 @@
 @import url('./components/Account.css');
 @import url('./components/ConnectWallet.css');
 @import url('./components/Spinner.css');
+@import url('./components/Footer.css');
 
 body {
   color: #000000;

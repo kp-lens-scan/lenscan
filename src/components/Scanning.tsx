@@ -14,6 +14,7 @@ import { IFormControl } from '../models/Form.models';
 import Spinner from './Spinner';
 import { IProfile, IPub } from '../models/ContractResponse';
 import paperImg from '../assets/images/paper.png';
+import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
 
 const Scanning = () => {
   const { active, chainId, activate, library } = useWeb3React();
@@ -84,13 +85,16 @@ const Scanning = () => {
                 });
               }
             }} />
-          <Button variant="contained" color="primary" onClick={scanAccount} disabled={accountControl.invalid}>Start Scan</Button>
+          <Button variant="contained" color="primary" onClick={scanAccount} disabled={accountControl.invalid}>
+            <ManageSearchOutlinedIcon />
+            <span className="ScanningButtonText">Scan</span>
+          </Button>
           <div className="ScanningResultsContainer">
             {!scanningAccount ?
               <>
                 {!accountNotFound ?
                   <>
-                    <span className="ProfileName CompletedColor">{profile?.handle}</span>
+                    <span className="ProfileName">{profile?.handle}</span>
                     {/* <div className="AccountRatingContainer">
                       <span className="AccountRatingLabel">Account Rating:</span>
                       <span className="AccountRatingValue CompletedColor">Good</span>
@@ -148,7 +152,10 @@ const Scanning = () => {
             sx={{ width: 300 }}
             renderInput={(params) => <TextField {...params} placeholder="Choose a dapp to scan" />}
           />
-          <Button variant="contained" color="primary">Start Scan</Button>
+          <Button variant="contained" color="primary">
+            <ManageSearchOutlinedIcon />
+            <span className="ScanningButtonText">Scan</span>
+          </Button>
           <div className="ScanningResultsContainer">
             <div className="AccountRatingContainer">
               <span className="AccountRatingLabel">Account Rating:</span>
