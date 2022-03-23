@@ -60,7 +60,7 @@ const Scanning = () => {
 
   return (
     <div className="ScanningContainer">
-      <ToggleButtonGroup value={toggleValue} exclusive onChange={(event, value) => {
+      <ToggleButtonGroup color="primary" value={toggleValue} exclusive onChange={(event, value) => {
         if (value) {
           setToggleValue(value);
         }
@@ -100,7 +100,7 @@ const Scanning = () => {
                       <span className="AccountRatingValue CompletedColor">Good</span>
                     </div> */}
                     <TabContext value={accountTab}>
-                      <TabList textColor="secondary" onChange={(event, value) => {
+                      <TabList textColor="primary" onChange={(event, value) => {
                         if (value) {
                           setAccountTab(value);
                         }
@@ -162,7 +162,7 @@ const Scanning = () => {
               <span className="AccountRatingValue CompletedColor">Good</span>
             </div>
             <TabContext value={accountTab}>
-              <TabList textColor="secondary" onChange={(event, value) => {
+              <TabList textColor="primary" onChange={(event, value) => {
                 if (value) {
                   setAccountTab(value);
                 }
