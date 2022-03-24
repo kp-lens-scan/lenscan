@@ -1,8 +1,6 @@
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
-import { Button } from '@mui/material';
+import { Button, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
@@ -13,7 +11,6 @@ import { useWeb3React } from '@web3-react/core';
 import { IFormControl } from '../models/Form.models';
 import Spinner from './Spinner';
 import { IProfile, IPub } from '../models/ContractResponse';
-import paperImg from '../assets/images/paper.png';
 import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
 
 const Scanning = () => {
@@ -69,40 +66,56 @@ const Scanning = () => {
 
   return (
     <div className="ScanningContainer">
-      <ToggleButtonGroup color="primary" value={toggleValue} exclusive onChange={(event, value) => {
-        if (value) {
-          setToggleValue(value);
+      <div className="ScanningSearchContainer">
+        <Select className="ScanningSearchSelect" value={toggleValue} onChange={(event) => {
+          setToggleValue(event.target.value as any);
+        }}>
+          <MenuItem value="account">Account</MenuItem>
+          <MenuItem value="dapp">Dapp</MenuItem>
+        </Select>
+        {toggleValue === 'account' ?
+          <>
+            <TextField className="ScanningSearchInput" placeholder="Enter a handle string to scan" type="text"
+              value={accountControl.value}
+              onKeyUp={(e) => {
+                if (e.key === 'Enter' || e.keyCode === 13) {
+                  scanAccount();
+                }
+              }}
+              onChange={(e) => {
+                if (e.target.value) {
+                  setAccountControl({
+                    value: e.target.value,
+                    invalid: false
+                  });
+                } else {
+                  setAccountControl({
+                    value: '',
+                    invalid: true
+                  });
+                }
+              }} />
+            <Button variant="contained" color="primary" onClick={scanAccount} disabled={accountControl.invalid}>
+              <ManageSearchOutlinedIcon />
+              <span className="ScanningButtonText">Scan</span>
+            </Button>
+          </> :
+          <>
+            <Autocomplete
+              disablePortal
+              options={dappList}
+              sx={{ width: 300 }}
+              renderInput={(params) => <TextField {...params} placeholder="Choose a dapp to scan" />}
+            />
+            <Button variant="contained" color="primary">
+              <ManageSearchOutlinedIcon />
+              <span className="ScanningButtonText">Scan</span>
+            </Button>
+          </>
         }
-      }}>
-        <ToggleButton value="account">Account</ToggleButton>
-        <ToggleButton value="dapp">Dapp</ToggleButton>
-      </ToggleButtonGroup>
+      </div>
       {toggleValue === 'account' ?
         <div className="ScanningDataContainer">
-          <TextField fullWidth className="ScanningAccountInput" placeholder="Enter a handle string to scan" type="text"
-            value={accountControl.value}
-            onKeyUp={(e) => {
-              if (e.key === 'Enter' || e.keyCode === 13) {
-                scanAccount();
-              }
-            }}
-            onChange={(e) => {
-              if (e.target.value) {
-                setAccountControl({
-                  value: e.target.value,
-                  invalid: false
-                });
-              } else {
-                setAccountControl({
-                  value: '',
-                  invalid: true
-                });
-              }
-            }} />
-          <Button variant="contained" color="primary" onClick={scanAccount} disabled={accountControl.invalid}>
-            <ManageSearchOutlinedIcon />
-            <span className="ScanningButtonText">Scan</span>
-          </Button>
           <div className="ScanningResultsContainer">
             {!scanningAccount ?
               <>
@@ -123,19 +136,36 @@ const Scanning = () => {
                       </TabList>
                       <TabPanel value={'posts'}>
                         {pubs.length > 0 ?
-                          <div className="PostResultContainer">
-                            {pubs.map((pub: IPub, index: number) =>
-                              <div className="PostResultItemContainer" key={index}>
-                                <span className="PostResultItemId">#{index + 1}</span>
-                                <img className="PostResultItemImg" src={paperImg} alt="Paper" />
-                                <div className="PostResultItemActions">
-                                  <Button variant="contained" color="secondary" onClick={() => {
-                                    window.open(pub?.contentURI, '_blank');
-                                  }}>Read</Button>
-                                </div>
-                              </div>
-                            )}
-                          </div> : <span>This handle string has no post!</span>
+                          <TableContainer>
+                            <Table>
+                              <TableHead>
+                                <TableRow>
+                                  <TableCell>Post ID</TableCell>
+                                  <TableCell>Post URI</TableCell>
+                                  <TableCell></TableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                {pubs.map((pub: IPub, index: number) => (
+                                  <TableRow key={index}>
+                                    <TableCell scope="row">
+                                      #{index + 1}
+                                    </TableCell>
+                                    <TableCell>
+                                      <span className="PostContentURI" onClick={() => {
+                                        window.open(pub?.contentURI, '_blank');
+                                      }}>{pub?.contentURI}</span>
+                                    </TableCell>
+                                    <TableCell>
+                                      <Button variant="contained" color="secondary" onClick={() => {
+                                        window.open(pub?.contentURI, '_blank');
+                                      }}>View</Button>
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </TableContainer> : <span>This handle string has no post!</span>
                         }
                       </TabPanel>
                       <TabPanel value={'followers'}>
@@ -154,16 +184,6 @@ const Scanning = () => {
       }
       {toggleValue === 'dapp' ?
         <div className="ScanningDataContainer">
-          <Autocomplete
-            disablePortal
-            options={dappList}
-            sx={{ width: 300 }}
-            renderInput={(params) => <TextField {...params} placeholder="Choose a dapp to scan" />}
-          />
-          <Button variant="contained" color="primary">
-            <ManageSearchOutlinedIcon />
-            <span className="ScanningButtonText">Scan</span>
-          </Button>
           <div className="ScanningResultsContainer">
             <TabContext value={accountTab}>
               <TabList textColor="primary" onChange={(event, value) => {
