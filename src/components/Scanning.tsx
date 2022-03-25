@@ -1,6 +1,6 @@
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
-import { Button, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Button, Card, CardContent, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
@@ -190,12 +190,22 @@ const Scanning = () => {
                 if (value) {
                   setAccountTab(value);
                 }
+              // eslint-disable-next-line react/jsx-no-comment-textnodes
               }}>
+                // Here we need get the DAO creator contract address and then find all the profiles linked to this DAO
                 <Tab label="POSTS" value="posts" />
+                <Tab label="Tools" value="tools" />
               </TabList>
               <TabPanel value={'posts'}>
-                Item One
+                
               </TabPanel>
+              <TabPanel value={'tools'}>
+              <TextField id="outlined-basic" label="Contract Address" variant="outlined" />
+              <Card variant="outlined"><CardContent>ERC721 balance Of</CardContent></Card>
+              <Card variant="outlined">ERC1155  balance Of</Card>
+              <Card variant="outlined">ERC20  balance Of</Card>
+
+                </TabPanel>
             </TabContext>
           </div>
         </div> : <></>
