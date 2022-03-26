@@ -1,7 +1,7 @@
 import TextField from '@mui/material/TextField';
-import React, { useState } from 'react';
-import { Button, Card, CardContent, IconButton, MenuItem, Select, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextareaAutosize, Tooltip } from '@mui/material';
-import Autocomplete from '@mui/material/Autocomplete';
+import { useState } from 'react';
+import axios from "axios";
+import { Button, IconButton, MenuItem, Select, Snackbar, TextareaAutosize, Tooltip } from '@mui/material';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import Tab from '@mui/material/Tab';
@@ -13,11 +13,8 @@ import Spinner from './Spinner';
 import { IProfile, IPub } from '../models/ContractResponse';
 import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
-import MuiAlert from '@mui/material/Alert';
 import { ethers } from 'ethers';
-const Alert = React.forwardRef(function Alert(props, ref: any) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+const LitJsSdk = require("lit-js-sdk");
 
 const Scanning = () => {
   const { library } = useWeb3React();
@@ -49,6 +46,16 @@ const Scanning = () => {
   const [snackbar, setSnackbar] = useState(false);
   const [accountNotFound, setAccountNotFound] = useState(false);
   const lensHubProxy = getContractByName('LensHubProxy', library.getSigner());
+  const [chain] = useState("mumbai");
+  let authSig: any;
+  let accessControlConditions: {
+    contractAddress: string;
+    standardContractType: string;
+    chain: string;
+    method: string;
+    parameters: string[];
+    returnValueTest: { comparator: string; value: string };
+  }[];
 
   const scanAccount = async () => {
     if (!accountControl.value) {
@@ -98,6 +105,58 @@ const Scanning = () => {
       .then((response) => response.json());
   }
 
+  const handleDecrypt = async (fileUrl: string, strfileUrl: string) => {
+    authSig = await LitJsSdk.checkAndSignAuthMessage({ chain });
+    accessControlConditions = [
+      {
+        contractAddress: "0x3c3b99BC9559D39d6dbc3fA4afF6D3373BF53A6f",
+        standardContractType: "ERC721",
+        chain,
+        method: "balanceOf",
+        parameters: [":userAddress"],
+        returnValueTest: {
+          comparator: ">",
+          value: "0",
+        },
+      },
+    ];
+    const client = new LitJsSdk.LitNodeClient();
+    await client.connect();
+    (window as any)["litNodeClient"] = client;
+
+    axios.get(fileUrl).then(async (res: any) => {
+      const encryptDATA = res["data"];
+      axios({
+        url: strfileUrl, //your url
+        method: 'GET',
+        responseType: 'blob'})
+        .then(async (res: any) => {
+        console.log(
+          "Data to new Blob([response.data])  --",
+          new Blob([res.data])
+        );
+        const symmetricKey = await (window as any).litNodeClient.getEncryptionKey({
+          accessControlConditions,
+          // Note, below we convert the encryptedSymmetricKey from a UInt8Array to a hex string.  This is because we obtained the encryptedSymmetricKey from "saveEncryptionKey" which returns a UInt8Array.  But the getEncryptionKey method expects a hex string.
+          toDecrypt: LitJsSdk.uint8arrayToString(
+            Uint8Array.from(
+              Object.values(encryptDATA["encryptedSymmetricKey"])
+            ),
+            "base16"
+          ),
+          chain,
+          authSig,
+        });
+        console.log("Proceeding to decrypt the string");
+        const decryptedString = await LitJsSdk.decryptString(
+          new Blob([res.data]),
+          symmetricKey
+        );
+        console.log("Decrypted Data --", decryptedString);
+      });
+    });
+  };
+
   return (
     <>
       <div className="ScanningContainer">
@@ -140,7 +199,6 @@ const Scanning = () => {
                 setDappSelectValue(event.target.value as any);
               }}>
                 <MenuItem value={'default'} disabled>Choose a dapp</MenuItem>
-                <MenuItem value={'all'}>All</MenuItem>
                 <MenuItem value={'kittyparty'}>Kitty Party</MenuItem>
               </Select>
             </>
@@ -154,8 +212,8 @@ const Scanning = () => {
                   {!accountNotFound ?
                     <>
                       <div className="ProfileContainer">
-                        <span className="ProfileLabel">Handle string:</span>
-                        <span className="ProfileName">{profile?.handle}</span>
+                        <span className="ProfileLabel">{ethers.utils.isAddress(accountControl.value) ? 'Address' : 'Account'}:</span>
+                        <span className="ProfileName">{accountControl.value}</span>
                       </div>
                       <TabContext value={accountTab}>
                         <TabList textColor="primary" onChange={(event, value) => {
@@ -219,15 +277,23 @@ const Scanning = () => {
                   <Tab label="Tools" value="tools" />
                 </TabList>
                 <TabPanel value={'tools'}>
-                  {dappSelectValue === 'all' || dappSelectValue === 'kittyparty' ?
+                  {dappSelectValue === 'kittyparty' ?
                     <div className="DappToolsContainer">
                       <TextareaAutosize value={encryptedControl.value} className="DappToolsEncryptedData" minRows={3}
                         onChange={(e) => {
                           if (e.target.value) {
-                            setEncryptedControl({
-                              value: e.target.value,
-                              invalid: false
-                            });
+                            const data = JSON.parse(e.target.value);
+                            if (data.fileUrl && data.strfileUrl) {
+                              setEncryptedControl({
+                                value: e.target.value,
+                                invalid: false
+                              });
+                            } else {
+                              setEncryptedControl({
+                                value: '',
+                                invalid: true
+                              });
+                            }
                           } else {
                             setEncryptedControl({
                               value: '',
@@ -235,7 +301,10 @@ const Scanning = () => {
                             });
                           }
                         }} />
-                      <Button variant="contained" disabled={!encryptedControl.value || encryptedControl.invalid}>Decrypt</Button>
+                      <Button variant="contained" disabled={!encryptedControl.value || encryptedControl.invalid} onClick={() => {
+                        const data = JSON.parse(encryptedControl.value);
+                        handleDecrypt(data.fileUrl, data.strfileUrl);
+                      }}>Decrypt</Button>
                     </div> : <></>
                   }
                 </TabPanel>
