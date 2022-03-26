@@ -1,0 +1,37 @@
+.AccountContainer {
+  align-items: center;
+  display: flex;
+  gap: 7px;
+}
+
+.AccountInfoContainer {
+  align-items: center;
+  background: #e4ffbd;
+  border: solid 1px #3ba120;
+  border-radius: 10px;
+  display: flex;
+  height: 35px;
+}
+
+.AccountAddressText {
+  align-items: center;
+  background: #abfe2c;
+  border-radius: 8px;
+  display: flex;
+  height: 100%;
+  padding: 0 10px;
+}
+
+.AccountBalanceText {
+  color: #000000;
+  font-size: 1rem;
+  padding: 0 10px;
+}
+
+.AccountNetworkName {
+  background: #913fdd;
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: .85rem;
+  padding: 0.35rem 0.65rem;
+}

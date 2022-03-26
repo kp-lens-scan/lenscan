@@ -1,0 +1,27 @@
+.AppWrapper {
+  background: linear-gradient(180deg,#d4f5dc 6.25%,hsla(0,0%,100%,0)),#e4ebe4;
+  height: 100vh;
+  overflow: hidden;
+  width: 100%;
+}
+
+.AppContainer {
+  display: flex;
+  height: calc(100vh - 110px);
+  width: 100%;
+}
+
+.AppRoutingContainer {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 110px);
+  overflow: hidden scroll;
+  width: 100%;
+}
+
+.AppContent {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 110px);
+  overflow: hidden scroll;
+}

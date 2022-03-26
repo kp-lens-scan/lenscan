@@ -1,0 +1,14 @@
+.FooterContainer {
+  align-items: center;
+  background: #e4ffbd;
+  border-top: 1px solid #3ba120;
+  display: flex;
+  height: 40px;
+  padding: 0 50px;
+}
+
+.CopyRightText {
+  font-size: .8rem;
+  font-style: italic;
+  font-weight: 600;
+}

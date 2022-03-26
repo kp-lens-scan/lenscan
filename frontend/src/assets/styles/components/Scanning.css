@@ -1,0 +1,93 @@
+.ScanningContainer {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2rem;
+  width: 100%;
+}
+
+.ScanningDataContainer {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.ScanningSearchContainer {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .65rem;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.ScanningSearchSelect {
+  width: 120px !important;
+}
+
+.ScanningSearchInput {
+  width: 400px !important;
+}
+
+.ScanningResultsContainer {
+  background: #e4ffbd;
+  border: 1px solid #3ba120;
+  border-radius: 1rem;
+  box-shadow: 4px 4px 4px rgb(0 0 0 / 25%);
+  display: flex;
+  flex-direction: column;
+  max-width: 1050px;
+  padding: .5rem .25rem;
+  width: 100%;
+}
+
+.ProfileContainer {
+  align-items: center;
+  display: flex;
+  gap: .5rem;
+  padding: .5rem 1rem;
+}
+
+.ProfileLabel {
+  color: #807a7a;
+}
+
+.ProfileName {
+  color: #913fdd;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.InprogressColor {
+  color: #CA9D00 !important;
+}
+
+.CompletedColor {
+  color: #339B22 !important;
+}
+
+.ErrorColor {
+  color: #FF6666 !important;
+}
+
+.NotFoundContainer {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0;
+  width: 100%;
+}
+
+.ScanningButtonText {
+  margin-left: .35rem;
+}
+
+.PostContentURI {
+  color: #3131e9;
+  cursor: pointer;
+  text-decoration: underline;
+}
