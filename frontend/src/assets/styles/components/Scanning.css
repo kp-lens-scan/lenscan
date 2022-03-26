@@ -148,3 +148,17 @@
   justify-content: center;
   width: 10%;
 }
+
+.DappToolsContainer {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.DappToolsEncryptedData {
+  max-width: 500px;
+  width: 100%;
+}

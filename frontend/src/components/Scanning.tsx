@@ -1,6 +1,6 @@
 import TextField from '@mui/material/TextField';
 import React, { useState } from 'react';
-import { Button, Card, CardContent, IconButton, MenuItem, Select, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip } from '@mui/material';
+import { Button, Card, CardContent, IconButton, MenuItem, Select, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextareaAutosize, Tooltip } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
@@ -22,7 +22,9 @@ const Alert = React.forwardRef(function Alert(props, ref: any) {
 const Scanning = () => {
   const { library } = useWeb3React();
   const [toggleValue, setToggleValue] = useState<'account' | 'dapp'>('account');
+  const [dappSelectValue, setDappSelectValue] = useState('default');
   const [accountTab, setAccountTab] = useState<'posts' | 'investments' | 'communities' | 'nfts'>('posts');
+  const [dappTab, setDappTab] = useState('tools');
   const dappList = [
     {
       label: 'All',
@@ -34,6 +36,10 @@ const Scanning = () => {
     }
   ];
   const [accountControl, setAccountControl] = useState<IFormControl>({
+    value: '',
+    invalid: true
+  });
+  const [encryptedControl, setEncryptedControl] = useState<IFormControl>({
     value: '',
     invalid: true
   });
@@ -52,7 +58,7 @@ const Scanning = () => {
     setAccountNotFound(false);
     setPubs([]);
     setProfile(undefined);
-    let profileAddress: {username: string; profileId: string};
+    let profileAddress: { username: string; profileId: string };
     let accountScan: string;
     if (ethers.utils.isAddress(accountControl.value)) {
       profileAddress = await getProfile(accountControl.value);
@@ -130,16 +136,13 @@ const Scanning = () => {
               </Button>
             </> :
             <>
-              <Autocomplete
-                disablePortal
-                options={dappList}
-                sx={{ width: 300 }}
-                renderInput={(params) => <TextField {...params} placeholder="Choose a dapp to scan" />}
-              />
-              <Button variant="contained" color="primary">
-                <ManageSearchOutlinedIcon />
-                <span className="ScanningButtonText">Scan</span>
-              </Button>
+              <Select value={dappSelectValue} sx={{ width: 300 }} onChange={(event) => {
+                setDappSelectValue(event.target.value as any);
+              }}>
+                <MenuItem value={'default'} disabled>Choose a dapp</MenuItem>
+                <MenuItem value={'all'}>All</MenuItem>
+                <MenuItem value={'kittyparty'}>Kitty Party</MenuItem>
+              </Select>
             </>
           }
         </div>
@@ -207,26 +210,34 @@ const Scanning = () => {
         {toggleValue === 'dapp' ?
           <div className="ScanningDataContainer">
             <div className="ScanningResultsContainer">
-              <TabContext value={accountTab}>
+              <TabContext value={dappTab}>
                 <TabList textColor="primary" onChange={(event, value) => {
                   if (value) {
-                    setAccountTab(value);
+                    setDappTab(value);
                   }
-                  // eslint-disable-next-line react/jsx-no-comment-textnodes
                 }}>
-                // Here we need get the DAO creator contract address and then find all the profiles linked to this DAO
-                  <Tab label="POSTS" value="posts" />
                   <Tab label="Tools" value="tools" />
                 </TabList>
-                <TabPanel value={'posts'}>
-
-                </TabPanel>
                 <TabPanel value={'tools'}>
-                  <TextField id="outlined-basic" label="Contract Address" variant="outlined" />
-                  <Card variant="outlined"><CardContent>ERC721 balance Of</CardContent></Card>
-                  <Card variant="outlined">ERC1155  balance Of</Card>
-                  <Card variant="outlined">ERC20  balance Of</Card>
-
+                  {dappSelectValue === 'all' || dappSelectValue === 'kittyparty' ?
+                    <div className="DappToolsContainer">
+                      <TextareaAutosize value={encryptedControl.value} className="DappToolsEncryptedData" minRows={3}
+                        onChange={(e) => {
+                          if (e.target.value) {
+                            setEncryptedControl({
+                              value: e.target.value,
+                              invalid: false
+                            });
+                          } else {
+                            setEncryptedControl({
+                              value: '',
+                              invalid: true
+                            });
+                          }
+                        }} />
+                      <Button variant="contained" disabled={!encryptedControl.value || encryptedControl.invalid}>Decrypt</Button>
+                    </div> : <></>
+                  }
                 </TabPanel>
               </TabContext>
             </div>
