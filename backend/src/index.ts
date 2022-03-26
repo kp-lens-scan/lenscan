@@ -15,12 +15,12 @@ import { CreateProfileDataStruct, PostDataStruct } from '../typechain-types/Lens
 
 dotenv.config();
 
-const PORT = 80;
+const PORT = 8080;
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 const MockHubAddress = "0x9BB48d8F9c4596b98C8bB1fB6D67aaE238F81CC2";
 const LensHubProxy = "0xd7B3481De00995046C7850bCe9a5196B7605c367";
 const EmptyCollectModuleAddr = "0xb96e42b5579e76197B4d2EA710fF50e037881253";
-
+console.log("process.env.PRIVATE_KEY")
 let wallet: Wallet = new ethers.Wallet(process.env.PRIVATE_KEY as BytesLike);
 
 let provider = ethers.getDefaultProvider("https://matic-mumbai.chainstacklabs.com");
@@ -74,6 +74,10 @@ app.post("/createprofile", async (req: any, res: any) => {
     } else {
         res.status(500).send({ error: "Invalid params" });
     }
+});
+
+app.get("/health", async (req: any, res: any) => {
+    res.status(200).send({ status: "Service is up!" });
 });
 
 app.get("/profile", async (req: any, res: any) => {
