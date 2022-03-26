@@ -38,8 +38,16 @@ const createTable = "CREATE TABLE IF NOT EXISTS users('username' varchar, 'addre
 const db = new Database("lenscan.db", { verbose: console.log });
 db.exec(createTable);
 
-app.use(cors());
+app.use(cors({
+    origin: '*'
+}));
 app.use(express.json());
+
+app.post("/test", async (req: any, res: any) => {
+    res.send({
+        "state": "all good"
+    });
+});
 
 app.post("/createprofile", async (req: any, res: any) => {
     const username = req.body?.username;
