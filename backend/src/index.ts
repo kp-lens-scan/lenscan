@@ -105,6 +105,8 @@ app.get("/profile", async (req: any, res: any) => {
 app.post("/publish", async (req: any, res: any) => {
     const address = req.body?.address;
     const fileUrl = req.body?.fileUrl;
+    const strfileUrl = req.body?.strfileUrl;
+    const contentURI = {"fileUrl":fileUrl, "strfileUrl":strfileUrl};
 
     const stmt = db.prepare(
         "SELECT username FROM users WHERE address = ?"
@@ -118,7 +120,7 @@ app.post("/publish", async (req: any, res: any) => {
             if (profileId && ethers.utils.isAddress(address) && fileUrl) {
                 const inputStruct: PostDataStruct = {
                     profileId: profileId,
-                    contentURI: fileUrl,
+                    contentURI: JSON.stringify(contentURI),
                     collectModule: EmptyCollectModuleAddr,
                     collectModuleData: [],
                     referenceModule: ZERO_ADDRESS,
