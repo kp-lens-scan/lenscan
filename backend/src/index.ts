@@ -34,7 +34,7 @@ const mockHub = MockProfileCreationProxy__factory.connect(
 );
 const lensHub = LensHub__factory.connect(LensHubProxy, governance);
 
-const createTable = "CREATE TABLE IF NOT EXISTS users('username' varchar, 'address' varchar, 'postcount' number);";
+const createTable = "CREATE TABLE IF NOT EXISTS users('username' varchar, 'address' varchar not null unique, 'postcount' number);";
 const db = new Database("lenscan.db", { verbose: console.log });
 db.exec(createTable);
 
@@ -58,59 +58,87 @@ app.post("/createprofile", async (req: any, res: any) => {
         };
         try {
             await waitForTx(mockHub.connect(governance).proxyCreateProfile(inputStruct));
-            const profileID = await lensHub.getProfileIdByHandle(username);
+            const profileId = await lensHub.getProfileIdByHandle(username);
             
             const stmt = db.prepare(
-                "INSERT INTO scores (username address, postcount) VALUES (?, ?, ?)"
+                "INSERT INTO users (username, address, postcount) VALUES (?, ?, ?)"
             );
             stmt.run(username, address.toLowerCase(), 0);
 
             res.send({
-                "profileId": profileID.toString()
+                "profileId": profileId.toString()
             });
         } catch (error) {
-            res.send("Error occured");
+            res.status(500).send({ error: "Tx error occured" });
         }
     } else {
-        res.send("Invalid params");
+        res.status(500).send({ error: "Invalid params" });
+    }
+});
+
+app.get("/profile", async (req: any, res: any) => {
+    const address = req.query?.address;
+
+    if (ethers.utils.isAddress(address)) {
+        try {
+            const stmt = db.prepare(
+                "SELECT username FROM users WHERE address = ?"
+            );
+            const uNames = stmt.all(address.toLowerCase());
+            const profileId = await lensHub.getProfileIdByHandle(uNames[0].username);
+            res.send({
+                "username": uNames[0].username,
+                "profileId": profileId.toString()
+            });
+        } catch(error) {
+            res.status(500).send({ error: "Error occured" });
+        }
+    } else {        
+        res.status(500).send({ error: "Invalid params" });
     }
 });
 
 app.post("/publish", async (req: any, res: any) => {
-    const username = req.body?.username;
     const address = req.body?.address;
     const fileUrl = req.body?.fileUrl;
 
-    const profileID = await lensHub.getProfileIdByHandle(username);
-
-    if (profileID && ethers.utils.isAddress(address) && address) {
-        const inputStruct: PostDataStruct = {
-            profileId: profileID,
-            contentURI: fileUrl,
-            collectModule: EmptyCollectModuleAddr,
-            collectModuleData: [],
-            referenceModule: ZERO_ADDRESS,
-            referenceModuleData: [],
-        };
+    const stmt = db.prepare(
+        "SELECT username FROM users WHERE address = ?"
+    );
+    const userData = stmt.get(address.toLowerCase());
+ 
+    if (userData) {
         try {
-            await waitForTx(lensHub.connect(governance).post(inputStruct));
-            const stmt1 = db.prepare(
-                "SELECT postcount FROM users WHERE address = ?"
-            );
-            const postCount = stmt1.all(address.toLowerCase());
-            const newCount = postCount[0].postcount + 1;
+            const profileId = await lensHub.getProfileIdByHandle(userData.username);
 
-            const stmt2 = db.prepare(
-                "UPDATE users SET postcount=? WHERE address = ?"
-            );
-            stmt2.run(newCount, address);
-            console.log(await lensHub.getPub(profileID, newCount));
-            res.send("Post created");
+            if (profileId && ethers.utils.isAddress(address) && fileUrl) {
+                const inputStruct: PostDataStruct = {
+                    profileId: profileId,
+                    contentURI: fileUrl,
+                    collectModule: EmptyCollectModuleAddr,
+                    collectModuleData: [],
+                    referenceModule: ZERO_ADDRESS,
+                    referenceModuleData: [],
+                };
+                await waitForTx(lensHub.connect(governance).post(inputStruct));
+                const stmt1 = db.prepare(
+                    "SELECT postcount FROM users WHERE address = ?"
+                );
+                const postCount = stmt1.all(address.toLowerCase());
+                const newCount = postCount[0].postcount + 1;
+
+                const stmt2 = db.prepare(
+                    "UPDATE users SET postcount=? WHERE address = ?"
+                );
+                stmt2.run(newCount, address);
+                console.log(await lensHub.getPub(profileId, newCount));
+                res.send("Post created");
+            }
         } catch(error) {
-            res.send("Error occured");
+            res.status(500).send({ error: "Error occured" });
         }
     } else {
-        res.send("Invalid username");
+        res.status(500).send({ error: "Address not registered" });
     }
 });   
 
