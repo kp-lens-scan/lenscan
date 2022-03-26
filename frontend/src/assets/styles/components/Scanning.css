@@ -86,8 +86,65 @@
   margin-left: .35rem;
 }
 
-.PostContentURI {
-  color: #3131e9;
-  cursor: pointer;
-  text-decoration: underline;
+.PostsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  width: 100%;
+}
+
+.PostsHeaderContainer {
+  align-items: center;
+  display: flex;
+  justify-content: flex-start;
+  background: #0a8b0a;
+  padding: 1rem;
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 10px 10px 0 0;
+  width: 100%;
+}
+
+.PostsHeaderPostId {
+  width: 10%;
+}
+
+.PostsHeaderEncryptedContact {
+  width: 70%;
+}
+
+.PostsHeaderActions {
+  width: 20%;
+}
+
+.PostsItemContainer {
+  align-items: center;
+  display: flex;
+  justify-content: flex-start;
+  background: #ffffff;
+  padding: 1rem;
+  color: #000000;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 10px;
+  width: 100%;
+}
+
+.PostsItemPostId {
+  width: 10%;
+}
+
+.PostsItemEncryptedContact {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.6rem;
+  width: 80%;
+  word-break: break-all;
+}
+
+.PostsItemActions {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  width: 10%;
 }

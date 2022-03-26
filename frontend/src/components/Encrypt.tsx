@@ -25,7 +25,7 @@ import { IFormControl } from "../models/Form.models";
 import Spinner from "./Spinner";
 import { IProfile, IPub } from "../models/ContractResponse";
 import ManageSearchOutlinedIcon from "@mui/icons-material/ManageSearchOutlined";
-import LitJsSdk from "lit-js-sdk";
+const LitJsSdk = require("lit-js-sdk");
 
 declare let window: any;
 
