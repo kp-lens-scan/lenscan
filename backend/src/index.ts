@@ -9,13 +9,15 @@ import {
 import cors from "cors";
 import express from "express";
 import Database from "better-sqlite3";
+const https = require('https');
+const fs = require('fs');
 
 import { MockProfileCreationProxy__factory, LensHub__factory } from '../typechain-types';
 import { CreateProfileDataStruct, PostDataStruct } from '../typechain-types/LensHub';
 
 dotenv.config();
 
-const PORT = 8080;
+const PORT = 80;
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 const MockHubAddress = "0x9BB48d8F9c4596b98C8bB1fB6D67aaE238F81CC2";
 const LensHubProxy = "0xd7B3481De00995046C7850bCe9a5196B7605c367";
@@ -159,6 +161,19 @@ app.post("/publish", async (req: any, res: any) => {
 app.listen(PORT, () => {
     console.log(`⚡️[server]: The Server is running at http://localhost:${PORT}`);
 });
+
+https
+  .createServer(
+    {
+        key: fs.readFileSync("/etc/letsencrypt/live/lenscan.org/privkey.pem"),
+        cert: fs.readFileSync("/etc/letsencrypt/live/lenscan.org/fullchain.pem"),
+        ca: fs.readFileSync('/etc/letsencrypt/live/lenscan.org/fullchain.pem'),
+    },
+    app
+  )
+  .listen(443, () => {
+    console.log('Listening...')
+  })
 
 async function waitForTx(tx: Promise<ContractTransaction>) {
     await (await tx).wait();
