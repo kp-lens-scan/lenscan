@@ -1,4 +1,4 @@
-import logoImg from '../assets/images/lens-logo.svg';
+import logoImg from '../assets/images/lens-logo.png';
 import IconButton from '@mui/material/IconButton';
 import LoginIcon from '@mui/icons-material/Login';
 import { useWeb3React } from '@web3-react/core';
