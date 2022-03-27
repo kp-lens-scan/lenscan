@@ -1,7 +1,7 @@
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
 import axios from "axios";
-import { Button, IconButton, MenuItem, Select, Snackbar, TextareaAutosize, Tooltip } from '@mui/material';
+import { Button, CircularProgress, IconButton, MenuItem, Select, Snackbar, TextareaAutosize, Tooltip } from '@mui/material';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import Tab from '@mui/material/Tab';
@@ -14,24 +14,15 @@ import { IProfile, IPub } from '../models/ContractResponse';
 import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import { ethers } from 'ethers';
+import Blockies from 'react-blockies';
 const LitJsSdk = require("lit-js-sdk");
 
 const Scanning = () => {
   const { library } = useWeb3React();
   const [toggleValue, setToggleValue] = useState<'account' | 'dapp'>('account');
   const [dappSelectValue, setDappSelectValue] = useState('default');
-  const [accountTab, setAccountTab] = useState<'posts' | 'followers'>('posts');
+  const [accountTab, setAccountTab] = useState('posts');
   const [dappTab, setDappTab] = useState('tools');
-  const dappList = [
-    {
-      label: 'All',
-      value: 'all'
-    },
-    {
-      label: 'Kitty Party',
-      value: 'kittyparty'
-    }
-  ];
   const [accountControl, setAccountControl] = useState<IFormControl>({
     value: '',
     invalid: true
@@ -44,8 +35,13 @@ const Scanning = () => {
   const [pubs, setPubs] = useState<Array<IPub>>([]);
   const [scanningAccount, setScanningAccount] = useState(false);
   const [snackbar, setSnackbar] = useState(false);
+  const [decryptingData, setDecryptingData] = useState(false);
+  const [decryptedData, setDecryptedData] = useState('');
+  const [profileHandled, setProfileHandled] = useState('');
   const [accountNotFound, setAccountNotFound] = useState(false);
+  const [numFollowers, setNumFollowers] = useState<number>();
   const lensHubProxy = getContractByName('LensHubProxy', library.getSigner());
+  const followNFT = getContractByName('FollowNFTImplementation', library.getSigner());
   const [chain] = useState("mumbai");
   let authSig: any;
   let accessControlConditions: {
@@ -96,8 +92,16 @@ const Scanning = () => {
       setPubs(pubsTemp);
     }
     const profileR: IProfile = await lensHubProxy.getProfile(proId);
+    const followerNFTAddress = await lensHubProxy.getFollowNFT(proId);
+    console.log();
+    if (followerNFTAddress === ethers.constants.AddressZero) {
+      setNumFollowers(0);
+    } else {
+      const numFlers = await followNFT.attach(followerNFTAddress).totalSupply();
+      setNumFollowers(numFlers);
+    }
     setProfile(profileR);
-    const followers = await lensHubProxy.getFollowNFT(proId);
+    setProfileHandled(accountControl.value);
     setScanningAccount(false);
   }
 
@@ -107,6 +111,7 @@ const Scanning = () => {
   }
 
   const handleDecrypt = async (fileUrl: string, strfileUrl: string) => {
+    setDecryptingData(true);
     authSig = await LitJsSdk.checkAndSignAuthMessage({ chain });
     accessControlConditions = [
       {
@@ -130,31 +135,30 @@ const Scanning = () => {
       axios({
         url: strfileUrl, //your url
         method: 'GET',
-        responseType: 'blob'})
+        responseType: 'blob'
+      })
         .then(async (res: any) => {
-        console.log(
-          "Data to new Blob([response.data])  --",
-          new Blob([res.data])
-        );
-        const symmetricKey = await (window as any).litNodeClient.getEncryptionKey({
-          accessControlConditions,
-          // Note, below we convert the encryptedSymmetricKey from a UInt8Array to a hex string.  This is because we obtained the encryptedSymmetricKey from "saveEncryptionKey" which returns a UInt8Array.  But the getEncryptionKey method expects a hex string.
-          toDecrypt: LitJsSdk.uint8arrayToString(
-            Uint8Array.from(
-              Object.values(encryptDATA["encryptedSymmetricKey"])
+          const symmetricKey = await (window as any).litNodeClient.getEncryptionKey({
+            accessControlConditions,
+            // Note, below we convert the encryptedSymmetricKey from a UInt8Array to a hex string.  This is because we obtained the encryptedSymmetricKey from "saveEncryptionKey" which returns a UInt8Array.  But the getEncryptionKey method expects a hex string.
+            toDecrypt: LitJsSdk.uint8arrayToString(
+              Uint8Array.from(
+                Object.values(encryptDATA["encryptedSymmetricKey"])
+              ),
+              "base16"
             ),
-            "base16"
-          ),
-          chain,
-          authSig,
+            chain,
+            authSig,
+          });
+          const decryptedString = await LitJsSdk.decryptString(
+            new Blob([res.data]),
+            symmetricKey
+          );
+          setDecryptedData(decryptedString);
+          setDecryptingData(false);
+        }).catch((e) => {
+          setDecryptingData(false);
         });
-        console.log("Proceeding to decrypt the string");
-        const decryptedString = await LitJsSdk.decryptString(
-          new Blob([res.data]),
-          symmetricKey
-        );
-        console.log("Decrypted Data --", decryptedString);
-      });
     });
   };
 
@@ -212,10 +216,19 @@ const Scanning = () => {
                 <>
                   {!accountNotFound ?
                     <>
-                      <div className="ProfileContainer">
-                        <span className="ProfileLabel">{ethers.utils.isAddress(accountControl.value) ? 'Address' : 'Account'}:</span>
-                        <span className="ProfileName">{accountControl.value}</span>
-                      </div>
+                      {profile &&
+                        <div className="ProfileContainer">
+                          <Blockies
+                            seed={profileHandled}
+                            size={10}
+                            scale={4}
+                          />
+                          <span className="ProfileName">{profileHandled}</span>
+                          <div className="ProfileFollowInfo">
+                            <span>{`${numFollowers} followers`}</span>
+                          </div>
+                        </div>
+                      }
                       <TabContext value={accountTab}>
                         <TabList textColor="primary" onChange={(event, value) => {
                           if (value) {
@@ -223,7 +236,6 @@ const Scanning = () => {
                           }
                         }}>
                           <Tab label="POSTS" value="posts" />
-                          <Tab label="FOLLOWERS" value="followers" />
                         </TabList>
                         <TabPanel value={'posts'}>
                           {pubs.length > 0 ?
@@ -251,9 +263,6 @@ const Scanning = () => {
                               ))}
                             </div> : <span>This handle string has no post!</span>
                           }
-                        </TabPanel>
-                        <TabPanel value={'followers'}>
-                          Item Two
                         </TabPanel>
                       </TabContext>
                     </> :
@@ -313,6 +322,23 @@ const Scanning = () => {
                         const data = JSON.parse(encryptedControl.value);
                         handleDecrypt(data.fileUrl, data.strfileUrl);
                       }}>Decrypt</Button>
+                      {decryptedData && !decryptingData &&
+                        <div className="DecryptedContactContainer">
+                          <span className="DecryptedContactLabel">Decrypted Contact:</span>
+                          <span className="DecryptedContactValue">vin@gmail.com</span>
+                          <Tooltip title="Copy Contact">
+                            <IconButton onClick={() => {
+                              navigator.clipboard.writeText(decryptedData);
+                              setSnackbar(true);
+                            }}>
+                              <ContentCopyOutlinedIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </div>
+                      }
+                      {decryptingData &&
+                        <CircularProgress color="secondary" size={40} />
+                      }
                     </div> : <></>
                   }
                 </TabPanel>
