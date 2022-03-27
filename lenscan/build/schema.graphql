@@ -1,0 +1,6 @@
+type Profile @entity {
+  id: ID!
+  followNFTInstance: Bytes!
+  followingCount: BigInt!
+  followers: [String!]
+}
