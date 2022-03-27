@@ -24,7 +24,7 @@ const Scanning = () => {
   const { library } = useWeb3React();
   const [toggleValue, setToggleValue] = useState<'account' | 'dapp'>('account');
   const [dappSelectValue, setDappSelectValue] = useState('default');
-  const [accountTab, setAccountTab] = useState<'posts' | 'investments' | 'communities' | 'nfts'>('posts');
+  const [accountTab, setAccountTab] = useState<'posts' | 'followers'>('posts');
   const [dappTab, setDappTab] = useState('tools');
   const dappList = [
     {
@@ -92,6 +92,7 @@ const Scanning = () => {
     }
     setScanningAccount(true);
     setAccountNotFound(false);
+    setAccountTab('posts')
     setPubs([]);
     setProfile(undefined);
     let profileAddress: { username: string; profileId: string };
@@ -334,15 +335,22 @@ const Scanning = () => {
                       <TextareaAutosize value={encryptedControl.value} className="DappToolsEncryptedData" minRows={3}
                         onChange={(e) => {
                           if (e.target.value) {
-                            const data = JSON.parse(e.target.value);
-                            if (data.fileUrl && data.strfileUrl) {
+                            try {
+                              const data = JSON.parse(e.target.value);
+                              if (data.fileUrl && data.strfileUrl) {
+                                setEncryptedControl({
+                                  value: e.target.value,
+                                  invalid: false
+                                });
+                              } else {
+                                setEncryptedControl({
+                                  value: e.target.value,
+                                  invalid: true
+                                });
+                              }
+                            } catch (e2) {
                               setEncryptedControl({
                                 value: e.target.value,
-                                invalid: false
-                              });
-                            } else {
-                              setEncryptedControl({
-                                value: '',
                                 invalid: true
                               });
                             }
