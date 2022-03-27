@@ -283,15 +283,22 @@ const Scanning = () => {
                       <TextareaAutosize value={encryptedControl.value} className="DappToolsEncryptedData" minRows={3}
                         onChange={(e) => {
                           if (e.target.value) {
-                            const data = JSON.parse(e.target.value);
-                            if (data.fileUrl && data.strfileUrl) {
+                            try {
+                              const data = JSON.parse(e.target.value);
+                              if (data.fileUrl && data.strfileUrl) {
+                                setEncryptedControl({
+                                  value: e.target.value,
+                                  invalid: false
+                                });
+                              } else {
+                                setEncryptedControl({
+                                  value: e.target.value,
+                                  invalid: true
+                                });
+                              }
+                            } catch (e2) {
                               setEncryptedControl({
                                 value: e.target.value,
-                                invalid: false
-                              });
-                            } else {
-                              setEncryptedControl({
-                                value: '',
                                 invalid: true
                               });
                             }
