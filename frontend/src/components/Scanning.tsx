@@ -20,7 +20,7 @@ import config from '../config/config.json';
 const LitJsSdk = require("lit-js-sdk");
 
 const Scanning = () => {
-  const { library } = useWeb3React();
+  const { account, library } = useWeb3React();
   const [toggleValue, setToggleValue] = useState<'account' | 'dapp'>('account');
   const [dappSelectValue, setDappSelectValue] = useState('default');
   const [accountTab, setAccountTab] = useState('posts');
@@ -33,6 +33,7 @@ const Scanning = () => {
     value: '',
     invalid: true
   });
+  const [following, setFollowing] = useState(false);
   const [profile, setProfile] = useState<IProfile>();
   const [profileId, setProfileId] = useState();
   const [pubs, setPubs] = useState<Array<IPub>>([]);
@@ -60,6 +61,7 @@ const Scanning = () => {
     if (!accountControl.value) {
       return;
     }
+    setFollowing(false);
     setScanningAccount(true);
     setAccountNotFound(false);
     setAccountTab('posts')
@@ -100,6 +102,10 @@ const Scanning = () => {
       setNumFollowers(0);
     } else {
       const numFlers = await followNFT.attach(followerNFTAddress).totalSupply();
+      const bl = await followNFT.attach(followerNFTAddress).balanceOf(account);
+      if (parseFloat(bl) > 0) {
+        setFollowing(true);
+      }
       setNumFollowers(numFlers);
     }
     setProfileId(proId);
@@ -230,7 +236,7 @@ const Scanning = () => {
                             scale={4}
                           />
                           <span className="ProfileName">{profileHandled}</span>
-                          <Button variant="outlined" onClick={followAccount}>Follow</Button>
+                          <Button variant="outlined" onClick={followAccount} disabled={following}>{following ? 'Following' : 'Follow'}</Button>
                           <div className="ProfileFollowInfo">
                             <span>{`${numFollowers} followers`}</span>
                           </div>
