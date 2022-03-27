@@ -1,0 +1,12 @@
+type Account @entity {
+  id: ID!
+  followers: [Profile!]!
+  followersCount: BigInt!
+}
+
+type Profile @entity {
+  id: ID!
+  followNFTInstance: Bytes!
+  followingCount: BigInt!
+  followers: [String!]
+}
