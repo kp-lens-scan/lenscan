@@ -1,7 +1,9 @@
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
+import Dendrograms from "./Dendrograms";
 import axios from "axios";
-import { Button, IconButton, MenuItem, Select, Snackbar, TextareaAutosize, Tooltip } from '@mui/material';
+import { Box, Button, Grid, IconButton, MenuItem, Select, Snackbar, TextareaAutosize, Tooltip } from '@mui/material';
+
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import Tab from '@mui/material/Tab';
@@ -16,6 +18,7 @@ import AddLinkIcon from '@mui/icons-material/AddLink';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import { ethers } from 'ethers';
 const LitJsSdk = require("lit-js-sdk");
+
 
 const Scanning = () => {
   const { library } = useWeb3React();
@@ -44,9 +47,12 @@ const Scanning = () => {
   const [profile, setProfile] = useState<IProfile>();
   const [pubs, setPubs] = useState<Array<IPub>>([]);
   const [scanningAccount, setScanningAccount] = useState(false);
+  const [numberOfFollowers, setNumberOfFollowers] = useState("0");
   const [snackbar, setSnackbar] = useState(false);
+  
   const [accountNotFound, setAccountNotFound] = useState(false);
   const lensHubProxy = getContractByName('LensHubProxy', library.getSigner());
+  const followNFT = getContractByName('FollowNFTImplementation', library.getSigner());
   const [chain] = useState("mumbai");
   let authSig: any;
   let accessControlConditions: {
@@ -119,9 +125,25 @@ const Scanning = () => {
     }
     const profileR: IProfile = await lensHubProxy.getProfile(proId);
     setProfile(profileR);
-    const followers = await lensHubProxy.getFollowNFT(proId);
+    const followerNFTAddress = await lensHubProxy.getFollowNFT(proId);
+    const numFollowers = await followNFT.attach(followerNFTAddress).totalSupply();
+    console.log("numFollowers-->", numFollowers.toString())
+    const followers = [];
+    setNumberOfFollowers(numFollowers.toString()||"0")
+    // for await (const num of asyncGenerator(parseInt(numFollowers.toString()))) {
+    //   followers.push(await followNFT.attach(followerNFTAddress).ownerOf(num));
+    // }
+    
+    // console.log(followers)
     setScanningAccount(false);
   }
+
+  // async function* asyncGenerator(count:number) {
+  //   let i = 0;
+  //   while (i < count) {
+  //     yield i++;
+  //   }
+  // }
 
   const getProfile = (address: string) => {
     return fetch(`https://lenscan.org/profile?address=${address}`)
@@ -182,6 +204,9 @@ const Scanning = () => {
 
   return (
     <>
+     <Box sx={{ flexGrow: 1 }}>
+     <Grid container spacing={1}>
+     <Grid item xs={8}>
       <div className="ScanningContainer">
         <div className="ScanningSearchContainer">
           <Select className="ScanningSearchSelect" value={toggleValue} onChange={(event) => {
@@ -256,7 +281,7 @@ const Scanning = () => {
                             <div className="PostsContainer">
                               <div className="PostsHeaderContainer">
                                 <span className="PostsHeaderPostId">Post ID</span>
-                                <span className="PostsHeaderEncryptedContact">Encrypted Contact</span>
+                                <span className="PostsHeaderEncryptedContact">Post URI/ Data</span>
                                 <div className="PostsHeaderActions"></div>
                               </div>
                               {pubs.map((pub: IPub, index: number) => (
@@ -279,7 +304,7 @@ const Scanning = () => {
                           }
                         </TabPanel>
                         <TabPanel value={'followers'}>
-                          Item Two
+                          Total number of followers {numberOfFollowers}
                         </TabPanel>
                       </TabContext>
                     </> :
@@ -340,6 +365,14 @@ const Scanning = () => {
           </div> : <></>
         }
       </div>
+      </Grid>
+      <Grid item xs={4}>
+      <div className="ScanningContainer">
+      <Dendrograms width={400} height={400} />
+      </div>
+      </Grid>
+      </Grid>
+      </Box>
       <Snackbar
         open={snackbar}
         autoHideDuration={6000}

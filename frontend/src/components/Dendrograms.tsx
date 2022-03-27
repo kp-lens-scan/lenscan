@@ -18,35 +18,35 @@ interface NodeShape {
 }
 
 const clusterData: NodeShape = {
-  name: '$',
+  name: 'wizg0t',
   children: [
     {
       name: 'A',
-      children: [
-        { name: 'A1' },
-        { name: 'A2' },
-        {
-          name: 'C',
-          children: [
-            {
-              name: 'C1',
-            },
-          ],
-        },
-      ],
+      // children: [
+      //   { name: 'A1' },
+      //   { name: 'A2' },
+      //   {
+      //     name: 'C',
+      //     children: [
+      //       {
+      //         name: 'C1',
+      //       },
+      //     ],
+      //   },
+      // ],
     },
-    {
-      name: 'B',
-      children: [{ name: 'B1' }, { name: 'B2' }, { name: 'B3' }],
-    },
-    {
-      name: 'X',
-      children: [
-        {
-          name: 'Z',
-        },
-      ],
-    },
+    // {
+    //   name: 'B',
+    //   children: [{ name: 'B1' }, { name: 'B2' }, { name: 'B3' }],
+    // },
+    // {
+    //   name: 'X',
+    //   children: [
+    //     {
+    //       name: 'Z',
+    //     },
+    //   ],
+    // },
   ],
 };
 
