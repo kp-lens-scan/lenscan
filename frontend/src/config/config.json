@@ -2,5 +2,7 @@
   "NETWORK": {
     "CHAIN_ID": 80001,
     "NAME": "Polygon Mumbai"
-  }
+  },
+  "LENSCAN_API_URL": "https://lenscan.org"
+
 }

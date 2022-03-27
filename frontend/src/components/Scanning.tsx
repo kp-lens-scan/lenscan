@@ -15,6 +15,8 @@ import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import { ethers } from 'ethers';
 import Blockies from 'react-blockies';
+import Dendrograms from './Dendrograms';
+import config from '../config/config.json';
 const LitJsSdk = require("lit-js-sdk");
 
 const Scanning = () => {
@@ -32,6 +34,7 @@ const Scanning = () => {
     invalid: true
   });
   const [profile, setProfile] = useState<IProfile>();
+  const [profileId, setProfileId] = useState();
   const [pubs, setPubs] = useState<Array<IPub>>([]);
   const [scanningAccount, setScanningAccount] = useState(false);
   const [snackbar, setSnackbar] = useState(false);
@@ -93,20 +96,24 @@ const Scanning = () => {
     }
     const profileR: IProfile = await lensHubProxy.getProfile(proId);
     const followerNFTAddress = await lensHubProxy.getFollowNFT(proId);
-    console.log();
     if (followerNFTAddress === ethers.constants.AddressZero) {
       setNumFollowers(0);
     } else {
       const numFlers = await followNFT.attach(followerNFTAddress).totalSupply();
       setNumFollowers(numFlers);
     }
+    setProfileId(proId);
     setProfile(profileR);
     setProfileHandled(accountControl.value);
     setScanningAccount(false);
   }
 
+  const followAccount = async () =>{
+    await lensHubProxy.follow([profileId], [[]]);
+  }
+
   const getProfile = (address: string) => {
-    return fetch(`https://lenscan.org/profile?address=${address}`)
+    return fetch(`${config.LENSCAN_API_URL}/profile?address=${address}`)
       .then((response) => response.json());
   }
 
@@ -140,7 +147,6 @@ const Scanning = () => {
         .then(async (res: any) => {
           const symmetricKey = await (window as any).litNodeClient.getEncryptionKey({
             accessControlConditions,
-            // Note, below we convert the encryptedSymmetricKey from a UInt8Array to a hex string.  This is because we obtained the encryptedSymmetricKey from "saveEncryptionKey" which returns a UInt8Array.  But the getEncryptionKey method expects a hex string.
             toDecrypt: LitJsSdk.uint8arrayToString(
               Uint8Array.from(
                 Object.values(encryptDATA["encryptedSymmetricKey"])
@@ -224,6 +230,7 @@ const Scanning = () => {
                             scale={4}
                           />
                           <span className="ProfileName">{profileHandled}</span>
+                          <Button variant="outlined" onClick={followAccount}>Follow</Button>
                           <div className="ProfileFollowInfo">
                             <span>{`${numFollowers} followers`}</span>
                           </div>
@@ -273,6 +280,7 @@ const Scanning = () => {
                 </> : <Spinner />
               }
             </div>
+            {/* <Dendrograms width={400} height={400} /> */}
           </div> : <></>
         }
         {toggleValue === 'dapp' ?
