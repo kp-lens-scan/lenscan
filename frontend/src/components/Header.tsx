@@ -31,7 +31,9 @@ const Header = () => {
   }, [activate]);
   return (
     <div className="HeaderContainer">
-      <img className="LogoImage" src={logoImg} alt="" />
+      <img className="LogoImage" src={logoImg} alt="" onClick={() => {
+        window.location.reload();
+      }} />
       <div className="HeaderRightSideContainer">
         {active && chainId === config.NETWORK.CHAIN_ID ?
           <EtherSWRConfig
