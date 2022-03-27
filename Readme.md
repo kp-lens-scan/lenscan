@@ -7,7 +7,7 @@ An etherscan for lens protocol. Developed for the ETH Global Lens Hackathon in Q
 ## Features
 1. DAO tooling box
 2. Lit Integration example for DAO toolbox
-3. Graph to see followers
+3. Graph to see followers - https://thegraph.com/hosted-service/subgraph/cryptobugbear/lenscan
 
 
 ## Workflow 
