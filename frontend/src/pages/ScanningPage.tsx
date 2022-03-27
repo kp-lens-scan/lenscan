@@ -1,4 +1,5 @@
 import Scanning from "../components/Scanning";
+import Dendrograms from "../components/Dendrograms";
 import { useWeb3React } from "@web3-react/core";
 import { EtherSWRConfig } from "ether-swr";
 import { getABIs } from "../helpers/Contract";
@@ -18,6 +19,7 @@ const ScanningPage = () => {
             refreshInterval: 1000
           }}>
           <Scanning />
+          <Dendrograms width={400} height={400} />
         </EtherSWRConfig> : <ConnectWallet />
       }
     </div>
