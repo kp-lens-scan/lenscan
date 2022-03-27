@@ -325,7 +325,7 @@ const Scanning = () => {
                       {decryptedData && !decryptingData &&
                         <div className="DecryptedContactContainer">
                           <span className="DecryptedContactLabel">Decrypted Contact:</span>
-                          <span className="DecryptedContactValue">vin@gmail.com</span>
+                          <span className="DecryptedContactValue">{decryptedData}</span>
                           <Tooltip title="Copy Contact">
                             <IconButton onClick={() => {
                               navigator.clipboard.writeText(decryptedData);
