@@ -20,7 +20,7 @@ const Scanning = () => {
   const { library } = useWeb3React();
   const [toggleValue, setToggleValue] = useState<'account' | 'dapp'>('account');
   const [dappSelectValue, setDappSelectValue] = useState('default');
-  const [accountTab, setAccountTab] = useState<'posts' | 'investments' | 'communities' | 'nfts'>('posts');
+  const [accountTab, setAccountTab] = useState<'posts' | 'followers'>('posts');
   const [dappTab, setDappTab] = useState('tools');
   const dappList = [
     {
@@ -63,6 +63,7 @@ const Scanning = () => {
     }
     setScanningAccount(true);
     setAccountNotFound(false);
+    setAccountTab('posts')
     setPubs([]);
     setProfile(undefined);
     let profileAddress: { username: string; profileId: string };
