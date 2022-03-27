@@ -5,7 +5,6 @@ import { Web3ReactProvider } from '@web3-react/core';
 import { getWeb3Provider } from './helpers/Wallet';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import EncryptContentPage from './pages/EncryptContentPage';
 import ScanningPage from './pages/ScanningPage';
 
 const theme = createTheme({
@@ -47,16 +46,6 @@ function App() {
                     <div className="AppContainer">
                       <div className="AppRoutingContainer">
                         <ScanningPage />
-                      </div>
-                    </div>
-                  </>
-                } />
-                <Route path="/encrypt" element={
-                  <>
-                    <Header />
-                    <div className="AppContainer">
-                      <div className="AppRoutingContainer">
-                        <EncryptContentPage />
                       </div>
                     </div>
                   </>

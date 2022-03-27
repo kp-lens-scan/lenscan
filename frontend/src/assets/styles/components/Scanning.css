@@ -48,8 +48,9 @@
 .ProfileContainer {
   align-items: center;
   display: flex;
-  gap: .5rem;
+  gap: .75rem;
   padding: .5rem 1rem;
+  flex-wrap: wrap;
 }
 
 .ProfileLabel {
@@ -57,7 +58,7 @@
 }
 
 .ProfileName {
-  color: #913fdd;
+  color: #0a8b0a;
   font-size: 1.25rem;
   font-weight: 600;
 }
@@ -150,15 +151,46 @@
 }
 
 .DappToolsContainer {
-  align-items: center;
+  align-items: flex-start;
   display: flex;
+  flex-direction: column;
   gap: 1rem;
-  justify-content: flex-start;
+  justify-content: center;
   flex-wrap: wrap;
   width: 100%;
 }
 
 .DappToolsEncryptedData {
   max-width: 500px;
+  width: 100%;
+}
+
+.DecryptedContactContainer {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.DecryptedContactLabel {
+  color: gray;
+  font-size: .85rem;
+}
+
+.DecryptedContactValue {
+  color: #0a8b0a;
+  font-weight: 600;
+}
+
+.identicon {
+  border-radius: 50%;
+  box-shadow: 4px 4px 7px 0 rgb(0 0 0 / 41%) !important;
+  cursor: pointer;
+}
+
+.ProfileFollowInfo {
+  display: flex;
+  justify-content: flex-start;
+  padding: .5rem 1rem;
   width: 100%;
 }
