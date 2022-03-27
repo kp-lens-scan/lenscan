@@ -12,6 +12,7 @@ import { IFormControl } from '../models/Form.models';
 import Spinner from './Spinner';
 import { IProfile, IPub } from '../models/ContractResponse';
 import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
+import AddLinkIcon from '@mui/icons-material/AddLink';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 import { ethers } from 'ethers';
 const LitJsSdk = require("lit-js-sdk");
@@ -56,6 +57,28 @@ const Scanning = () => {
     parameters: string[];
     returnValueTest: { comparator: string; value: string };
   }[];
+
+  const followAccount = async () =>{
+    console.log("Follow account called");
+    let accountScan: string;
+    let profileAddress: { username: string; profileId: string };
+
+    if (ethers.utils.isAddress(accountControl.value)) {
+      profileAddress = await getProfile(accountControl.value);
+      if (profileAddress?.username) {
+        accountScan = profileAddress?.username;
+      } else {
+        setAccountNotFound(true);
+        setScanningAccount(false);
+        return;
+      }
+    } else {
+      accountScan = accountControl.value;
+    }
+    const proId = await lensHubProxy.getProfileIdByHandle(accountScan);
+    //Follow this guy
+    await lensHubProxy.follow([proId], [[]]);
+  }
 
   const scanAccount = async () => {
     if (!accountControl.value) {
@@ -192,6 +215,10 @@ const Scanning = () => {
               <Button variant="contained" color="primary" onClick={scanAccount} disabled={accountControl.invalid}>
                 <ManageSearchOutlinedIcon />
                 <span className="ScanningButtonText">Scan</span>
+              </Button>
+              <Button variant="contained" color="primary" onClick={followAccount}>
+                <AddLinkIcon />
+                <span className="ScanningButtonText">Follow</span>
               </Button>
             </> :
             <>
